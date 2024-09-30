@@ -16,8 +16,7 @@ Ce dépôt contient les fichiers nécessaires pour construire une image GitLab p
 
 1. Clonez ce dépôt :
    ```
-   git clone https://github.com/votre-nom-utilisateur/gitlab-docker-swarm.git
-   cd gitlab-docker-swarm
+   git clone https://github.com/votre-nom-utilisateur/gitlab-docker-swarm.git](https://github.com/NumberOreo1/B3-GITLAB.git
    ```
 
 2. Construisez l'image Docker :
@@ -61,7 +60,7 @@ L'accès SSH est disponible sur le port 2222.
 Si vous rencontrez des problèmes, vérifiez les logs des services :
 
 ```
-docker service logs gitlab_gitlab
-docker service logs gitlab_postgresql
-docker service logs gitlab_redis
+docker service logs -f gitlab_gitlab
+docker service logs -f gitlab_postgresql
+docker service logs -f gitlab_redis
 ```
