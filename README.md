@@ -21,7 +21,7 @@ Ce dépôt contient les fichiers nécessaires pour construire une image GitLab p
 
 2. Construisez l'image Docker :
    ```
-   docker build -t mygitlab .
+   docker build -t img_gitlab .
    ```
 
    Cette commande va construire l'img gitlab en utilisant le Dockerfile
@@ -43,15 +43,14 @@ Le fichier `docker-compose.yml` contient la configuration pour le service GitLab
 - Redis
 - Application GitLab
 
-Assurez-vous de mettre à jour les variables d'environnement suivantes dans le fichier `docker-compose.yml` avant le déploiement :
+Mettre à jour les variables d'environnement dans le fichier `docker-compose.yml` avant le déploiement :
 
-- `GITLAB_HOST` : Votre domaine GitLab
-- `GITLAB_ROOT_PASSWORD` : Le mot de passe initial pour l'utilisateur root de GitLab
-- `GITLAB_SECRETS_*` : Générez de nouvelles clés secrètes pour ces variables
+- `GITLAB_HOST` : Votre url GitLab
+- `GITLAB_ROOT_PASSWORD` : MDP avec des chiffres, lettres et symboles 
 
 ## Accès à GitLab
 
-Une fois déployé, vous pouvez accéder à GitLab à l'adresse `https://gitlab.xxxx.fr` (remplacez par votre domaine réel).
+Une fois déployé, vous pouvez accéder à GitLab à l'adresse `http://localhost/`.
 
 L'accès SSH est disponible sur le port 2222.
 
@@ -60,6 +59,8 @@ L'accès SSH est disponible sur le port 2222.
 Si vous rencontrez des problèmes, vérifiez les logs des services :
 
 ```
+docker stack ps gitlab
+
 docker service logs -f gitlab_gitlab
 docker service logs -f gitlab_postgresql
 docker service logs -f gitlab_redis
