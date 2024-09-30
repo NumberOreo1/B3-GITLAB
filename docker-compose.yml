@@ -1,0 +1,57 @@
+version: "3"
+
+services:
+  redis:
+    image: sameersbn/redis:latest
+    command:
+      - --loglevel warning
+    volumes:
+      - ./redis:/var/lib/redis:Z
+    networks:
+      - gitlab_network 
+
+
+  postgresql:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: gitlab
+      POSTGRES_PASSWORD: gitlabdbpass
+      POSTGRES_DB: gitlabhq_production
+    volumes:
+      - ./postgresql:/var/lib/postgresql:Z
+    networks:
+      - gitlab_network
+
+  gitlab:
+    image: img_gitlab
+    environment:
+      DB_HOST: postgresql
+      DB_PORT: 5432
+      DB_USER: gitlab
+      DB_PASS: gitlabdbpass
+      DB_NAME: gitlabhq_production
+      DB_EXTENSION: pg_trgm
+      DB_ADAPTER: postgresql
+      TZ: Europe/Paris             
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      GITLAB_TIMEZONE: Europe/Paris  
+      GITLAB_HTTPS: "false"         
+      GITLAB_HOST: localhost         
+      GITLAB_PORT: 80                
+      GITLAB_SSH_PORT: 22          
+      GITLAB_ROOT_PASSWORD: XXXXXXXXXXXXXXXXXX
+    restart: always
+    ports:
+      - "80:80"                       
+      - "2222:22"                   
+    volumes:
+      - ./gitlab:/home/git/data:Z
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - gitlab_network
+
+
+networks:
+  gitlab_network:
+    driver: overlay 
