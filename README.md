@@ -20,6 +20,9 @@ Ce dépôt contient les fichiers nécessaires pour construire une image GitLab p
    ```
 
 2. Construisez l'image Docker :
+
+   Remplacer le registry_host,external_url,registry_external_url par votre hostname dans le Dockerfile
+   
    ```
    docker build -t img_gitlab .
    ```
