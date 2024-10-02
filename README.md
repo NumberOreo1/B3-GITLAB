@@ -1,5 +1,7 @@
 # B3-GITLAB
 
+Romain Igounet - Antony Lozano - Rémi Rezé
+
 # Configuration GitLab avec Docker Swarm
 
 Ce dépôt contient les fichiers nécessaires pour construire une image GitLab personnalisée et la déployer en utilisant Docker Swarm.
