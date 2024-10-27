@@ -1,0 +1,60 @@
+variables:
+  DOCKER_REGISTRY: $CI_REGISTRY
+  DOCKER_IMAGE: $CI_REGISTRY_IMAGE
+  DOCKER_TAG: $CI_COMMIT_SHA
+
+stages:
+  - build
+  - test
+  - deploy
+  - smoke
+
+# Job pour construire l'image Docker
+build:
+  stage: build
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker build -t $DOCKER_IMAGE:$DOCKER_TAG .
+    - docker tag $DOCKER_IMAGE:$DOCKER_TAG $DOCKER_IMAGE:latest
+    - docker push $DOCKER_IMAGE:latest
+  only:
+    - main
+
+# Job pour tester le contenu HTML
+test:
+  stage: test
+  before_script:
+    - apt-get update && apt-get install -y tidy curl
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $DOCKER_IMAGE:$DOCKER_TAG
+    - docker run --name test-container -v $(pwd)/build:/usr/share/nginx/html -d $DOCKER_IMAGE:$DOCKER_TAG
+    - sleep 10
+    - tidy -e /usr/share/nginx/html/*.html || exit 1
+    - curl -f http://localhost:80 || exit 1
+    - docker stop test-container
+    - docker rm test-container
+  only:
+    - main
+
+# Job pour déployer
+deploy:
+  stage: deploy
+  script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $DOCKER_IMAGE:$DOCKER_TAG
+    - docker stop production-container || true
+    - docker rm production-container || true
+    - docker run -d -p 80:80 --name production-container $DOCKER_IMAGE:$DOCKER_TAG
+  only:
+    - main
+  when: manual
+
+# Job pour exécuter les tests de fumée
+smoke:
+  stage: smoke
+  script:
+    - ./smoke_tests.sh
+  only:
+    - main
+  when: manual
