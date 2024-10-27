@@ -1,0 +1,16 @@
+docker run -d \
+    --name gitlab-runner \
+    --restart always \
+    -v gitlab-runner:/etc/gitlab-runner \
+    -v /var/run/docker.sock:/var/run/docker.sock \
+    gitlab/gitlab-runner:latest
+
+docker exec -it gitlab-runner bash
+
+
+gitlab-runner register -n \
+    --name "Shell Runner" \
+    --executor shell \
+    --url "http://gitlab2.swarm.logheure.fr" \
+    --registration-token "XXXXXX_RUNNER_TOKEN_XXXXXX" \
+    --tag-list dog-cat-cluster,stag,prod
